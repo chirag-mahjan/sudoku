@@ -41,8 +41,9 @@ while run:
             row = pos[1] // cs
             col = pos[0] // cs
             print("Selected cell:", row, col)
+        original = [row[:] for row in kkk]
         if i.type == pygame.KEYDOWN:
-            if row < 9 and col < 9:  # valid selection
+            if row < 9 and col < 9 and original[row][col]==0:  # valid selection
                 if i.key == pygame.K_1:
                     kkk[row][col] = 1
                 elif i.key == pygame.K_2:
