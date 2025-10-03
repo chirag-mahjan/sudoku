@@ -47,23 +47,56 @@ font = pygame.font.SysFont(None, 48)
 font1=pygame.font.SysFont(None,25)
 l1=list(range(1,10))
 random.shuffle(l1)
-kkk=[[0]*9 for _ in range(9)]
+
+
+def find_empty(board):
+    for r in range(9):
+        for c in range(9):
+            if board[r][c] == 0:
+                return (r, c)
+    return None
+
+def solve(board):
+    empty = find_empty(board)
+    if not empty:
+        return True
+    r, c = empty
+
+    for num in range(1, 10):
+        if is_valid(board, num, (r, c)):
+            board[r][c] = num
+            if solve(board):
+                return True
+            board[r][c] = 0
+    return False
+def generate_full_board():
+    board = [[0 for _ in range(9)] for _ in range(9)]
+    numbers = list(range(1, 10))
+    for i in range(0, 9, 3):  # fill diagonal 3x3 boxes first (helps solver)
+        random.shuffle(numbers)
+        for r in range(3):
+            for c in range(3):
+                board[i+r][i+c] = numbers[r*3+c]
+    solve(board)
+    return board
+def make_puzzle(board, holes=10):
+    puzzle = [row[:] for row in board]  # copy
+    count = holes
+    while count > 0:
+        r = random.randint(0, 8)
+        c = random.randint(0, 8)
+        if puzzle[r][c] != 0:
+            puzzle[r][c] = 0
+            count -= 1
+    return puzzle
+
+
+full_board = generate_full_board()
+kkk = make_puzzle(full_board, holes=1)  # 45 empty cells
+original = [row[:] for row in kkk]
 row=100
 col=100
-kkk[0]=l1
-kkk = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9]
-]
-original = [row[:] for row in kkk]
-print(kkk)
+
 
 scr=pygame.display.set_mode((400,400))
 run=True
@@ -131,13 +164,19 @@ while run:
                 text_rect = text.get_rect(center=(j*cs + cs//2, i*cs + cs//2))
                 scr.blit(text, text_rect)
     
-    tx=font1.render(str(gg),True,(0,0,0))
-    scr.blit(tx,(0,350))
+    count_text = " ".join([f"{n}:{gg[n]}  " for n in range(1,10)])
+    tx = font1.render(count_text, True, (0,0,0))
+    scr.blit(tx, (10, bs+10))
+
 
     
     if is_complete(kkk):
+        scr.fill(white)
+        txx = font.render("You solved the puzzle!", True, (0, 128, 0))
+        scr.blit(txx, (50, 180))
+
         print("You solved the puzzle!")
-        run = False
+        
 
         # text_rect = font.get_rect(center=(col*cs + cs//2, row*cs + cs//2))
         # scr.blit(text_rect,font)
