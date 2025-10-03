@@ -5,38 +5,51 @@ pygame.init()
 def is_complete(board):
     for r in range(9):
         for c in range(9):
-            if board[r][c] == 0 or not is_valid(board, board[r][c], (r, c)):
+            num = board[r][c]
+            if num == 0:
                 return False
+            # temporarily clear cell to validate
+            board[r][c] = 0
+            if not is_valid(board, num, (r, c)):
+                board[r][c] = num
+                return False
+            board[r][c] = num
     return True
+
 
 
 def is_valid(board, num, pos):
     r, c = pos
-    # row check
-    if num in board[r]:
-        return False
-    # col check
-    if num in [board[i][c] for i in range(9)]:
-        return False
-    # 3x3 box check
+
+    # Row check
+    for j in range(9):
+        if board[r][j] == num and j != c:
+            return False
+
+    # Col check
+    for i in range(9):
+        if board[i][c] == num and i != r:
+            return False
+
+    # Box check
     box_x, box_y = c // 3, r // 3
     for i in range(box_y*3, box_y*3 + 3):
         for j in range(box_x*3, box_x*3 + 3):
-            if board[i][j] == num:
+            if board[i][j] == num and (i, j) != pos:
                 return False
+
     return True
-
-
 
 
 
 
 font = pygame.font.SysFont(None, 48)
+font1=pygame.font.SysFont(None,25)
 l1=list(range(1,10))
 random.shuffle(l1)
 kkk=[[0]*9 for _ in range(9)]
-row=10
-col=10
+row=100
+col=100
 kkk[0]=l1
 kkk = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -100,12 +113,16 @@ while run:
         pygame.draw.line(scr, lc, (i*cs, 0), (i*cs, bs), lt)
        
         pygame.draw.line(scr, lc, (0, i*cs), (bs, i*cs), lt)
+    gg={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0}
     for i in range(9):
         for j in range(9):
+            if kkk[i][j] in gg:
+                gg[kkk[i][j]]+=1
+
             if original[i][j] != 0:
-                color = (0, 0, 0)  # fixed puzzle
+                color = (0, 0, 0)  
             else:
-                color = (0, 0, 255)  # user input
+                color = (0, 0, 255)  
             
 
 
@@ -113,10 +130,13 @@ while run:
                 text = font.render(str(kkk[i][j]), True, color)
                 text_rect = text.get_rect(center=(j*cs + cs//2, i*cs + cs//2))
                 scr.blit(text, text_rect)
+    
+    tx=font1.render(str(gg),True,(0,0,0))
+    scr.blit(tx,(0,350))
 
     
     if is_complete(kkk):
-        print("🎉 You solved the puzzle!")
+        print("You solved the puzzle!")
         run = False
 
         # text_rect = font.get_rect(center=(col*cs + cs//2, row*cs + cs//2))
