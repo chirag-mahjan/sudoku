@@ -1,6 +1,7 @@
 import pygame
 import random
 pygame.init()
+hole=10
 
 def is_complete(board):
     for r in range(9):
@@ -15,8 +16,6 @@ def is_complete(board):
                 return False
             board[r][c] = num
     return True
-
-
 
 def is_valid(board, num, pos):
     r, c = pos
@@ -40,15 +39,6 @@ def is_valid(board, num, pos):
 
     return True
 
-
-
-
-font = pygame.font.SysFont(None, 48)
-font1=pygame.font.SysFont(None,25)
-l1=list(range(1,10))
-random.shuffle(l1)
-
-
 def find_empty(board):
     for r in range(9):
         for c in range(9):
@@ -69,6 +59,7 @@ def solve(board):
                 return True
             board[r][c] = 0
     return False
+
 def generate_full_board():
     board = [[0 for _ in range(9)] for _ in range(9)]
     numbers = list(range(1, 10))
@@ -79,6 +70,7 @@ def generate_full_board():
                 board[i+r][i+c] = numbers[r*3+c]
     solve(board)
     return board
+
 def make_puzzle(board, holes=10):
     puzzle = [row[:] for row in board]  # copy
     count = holes
@@ -91,8 +83,12 @@ def make_puzzle(board, holes=10):
     return puzzle
 
 
+font = pygame.font.SysFont(None, 48)
+font1=pygame.font.SysFont(None,25)
+l1=list(range(1,10))
+random.shuffle(l1)
 full_board = generate_full_board()
-kkk = make_puzzle(full_board, holes=1)  # 45 empty cells
+kkk = make_puzzle(full_board, hole)  
 original = [row[:] for row in kkk]
 row=100
 col=100
@@ -109,6 +105,7 @@ gs = 9
 bs = cs * gs
 while run:
     scr.fill(white)
+    
     for i in pygame.event.get():
         if i.type==pygame.QUIT:
             run=False
@@ -176,10 +173,6 @@ while run:
         scr.blit(txx, (50, 180))
 
         print("You solved the puzzle!")
-        
-
-        # text_rect = font.get_rect(center=(col*cs + cs//2, row*cs + cs//2))
-        # scr.blit(text_rect,font)
 
     pygame.display.update()
 
