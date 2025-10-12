@@ -87,7 +87,6 @@ blue = (0, 0, 255)
 red = (255, 0, 0)
 green = (0, 150, 0)
 gray = (230, 230, 230)
-
 # ------------------ Level Selection Screen ------------------
 def level_selection():
     scr.fill(white)
@@ -130,6 +129,17 @@ def level_selection():
                     waiting = False
     return level
 
+
+#------------jo ek ek check karva hoy to but only for easy level ema pan amuk j case ma---
+# def hint(board):
+#     empty = find_empty(board)
+#     r, c = empty
+#     for num in range(1, 10):
+#         if is_valid(board, num, (r, c)):
+#             board[r][c] = num
+        
+
+
 # ------------------ Start Game ------------------
 level = level_selection()
 
@@ -163,6 +173,45 @@ while run:
             row = pos[1] // cs
             col = pos[0] // cs
             print("Selected cell:", row, col)
+            if row==9 and col==8:
+                solve(kkk)
+                for i in range(gs + 1):
+                    lt = 3 if i % 3 == 0 else 1
+                    pygame.draw.line(scr, black, (i*cs, 0), (i*cs, bs), lt)
+                    pygame.draw.line(scr, black, (0, i*cs), (bs, i*cs), lt)
+                gg = {n: 0 for n in range(1, 10)}
+                for i in range(9):
+                    for j in range(9):
+                        if kkk[i][j] in gg:
+                            gg[kkk[i][j]] += 1
+                        color = black if original[i][j] != 0 else blue
+                        if kkk[i][j] != 0:
+                            text = font.render(str(kkk[i][j]), True, color)
+                            text_rect = text.get_rect(center=(j*cs + cs//2, i*cs + cs//2))
+                            scr.blit(text, text_rect)
+                count_text = " ".join([f"{n}:{gg[n]}  " for n in range(1, 10)])
+                tx = font1.render(count_text, True, black)
+                scr.blit(tx, (10, bs + 10))
+                pygame.draw.rect(scr, green, [270,302,27,27],3)
+                font2 = pygame.font.SysFont(None, 30)
+                txx = font2.render("i", True, green)
+                scr.blit(txx, (280,307))
+                pygame.display.update()
+                time.sleep(3)
+                font2 = pygame.font.SysFont(None, 30)
+                scr.fill(white)
+                txx = font2.render("CONGRATULATIONS!", True, green)
+                scr.blit(txx, (45, 120))
+                pygame.display.update()
+                font2 = pygame.font.SysFont(None, 25)
+                txx = font2.render("You solved the puzzle!", True, green)
+                scr.blit(txx, (60, 150))
+                pygame.display.update()
+                print("You solved the puzzle!")
+                time.sleep(3)
+                break
+                
+                
 
         if i.type == pygame.KEYDOWN:
             if row < 9 and col < 9 and original[row][col] == 0:
@@ -198,6 +247,10 @@ while run:
     count_text = " ".join([f"{n}:{gg[n]}  " for n in range(1, 10)])
     tx = font1.render(count_text, True, black)
     scr.blit(tx, (10, bs + 10))
+    pygame.draw.rect(scr, green, [270,302,27,27],3)
+    font2 = pygame.font.SysFont(None, 30)
+    txx = font2.render("i", True, green)
+    scr.blit(txx, (280,307))
 
     if is_complete(kkk):
         font2 = pygame.font.SysFont(None, 30)
