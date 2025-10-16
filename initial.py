@@ -2,7 +2,9 @@ import pygame
 import random
 import time
 pygame.init()
-
+st=time.time()
+mt=0
+    
 # ------------------ Sudoku Logic ------------------
 def is_complete(board):
     for r in range(9):
@@ -160,11 +162,23 @@ cs = 33
 gs = 9
 bs = cs * gs
 
-scr = pygame.display.set_mode((bs, bs + 40))
+scr = pygame.display.set_mode((bs, bs + 60))
 run = True
 
 while run:
     scr.fill(white)
+    nt=int(time.time() - st)
+    font2 = pygame.font.SysFont(None, 30)
+    scr.fill(white)
+    pygame.draw.rect(scr, red, [10,323,59,27],3)
+    txx = font2.render(f"{mt}:{nt}", True, green)
+    scr.blit(txx,(25,327))
+    if nt==61:
+        mt=mt+1
+        st=time.time()
+        nt=0
+    
+    print(mt,":",nt)
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             run = False
@@ -254,16 +268,15 @@ while run:
 
     if is_complete(kkk):
         font2 = pygame.font.SysFont(None, 30)
+        font3 = pygame.font.SysFont(None, 25)
         scr.fill(white)
         txx = font2.render("CONGRATULATIONS!", True, green)
         scr.blit(txx, (45, 120))
-        pygame.display.update()
-        font2 = pygame.font.SysFont(None, 25)
         txx = font2.render("You solved the puzzle!", True, green)
         scr.blit(txx, (60, 150))
+        txx = font3.render(f"{mt}:{nt:02d}", True, green)
+        scr.blit(txx, (150, 220))
         pygame.display.update()
-        print("You solved the puzzle!")
-
         time.sleep(3)
         break
 
